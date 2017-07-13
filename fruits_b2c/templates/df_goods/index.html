@@ -1,6 +1,23 @@
-{% extends 'df_goods/base.html' %}
-{% block center_content %}
+{% extends 'base.html' %}
+{% block head %}
+<script type="text/javascript" src="/static/js/jquery-ui.min.js"></script>
+	<script type="text/javascript" src="/static/js/slide.js"></script>
 
+
+{% endblock %}
+{% block center_body %}
+<div class="navbar_con">
+		<div class="navbar">
+			<h1 class="fl">全部商品分类</h1>
+			<ul class="navlist fl">
+				<li><a href="">首页</a></li>
+				<li class="interval">|</li>
+				<li><a href="">手机生鲜</a></li>
+				<li class="interval">|</li>
+				<li><a href="">抽奖</a></li>
+			</ul>
+		</div>
+	</div>
 
 	<div class="center_con clearfix">
 		<ul class="subnav fl">
@@ -34,9 +51,10 @@
 			<div class="subtitle fl">
 				<span>|</span>
 {#                循环出最受欢迎的几个水果#}
-				<a href="#">鲜芒</a>
-				<a href="#">加州提子</a>
-				<a href="#">亚马逊牛油果</a>
+                {% for goods in hot %}
+                    <a href="/{{ goods.id }}">{{ goods.gtitle|slice:'10' }}</a>
+                {% endfor %}
+
 			</div>
 			<a href="#" class="goods_more fr" id="fruit_more">查看更多 ></a>
 		</div>
@@ -44,26 +62,13 @@
 		<div class="goods_con clearfix">
 			<div class="goods_banner fl"><img src="images/banner01.jpg"></div>
 			<ul class="goods_list fl">
+                {% for goods in type1 %}
 				<li>
-					<h4><a href="#">草莓</a></h4>
-					<a href="#"><img src="images/goods/goods003.jpg"></a>
-					<div class="prize">¥ 30.00</div>
+					<h4><a href="/{{ goods.id }}">{{ goods.gtitle }}</a></h4>
+					<a href="/{{ goods.id }}"><img src="static/{{ goods.gpic }}"></a>
+					<div class="prize">¥ {{ goods.gprice }}</div>
 				</li>
-				<li>
-					<h4><a href="#">葡萄</a></h4>
-					<a href="#"><img src="images/goods/goods002.jpg"></a>
-					<div class="prize">¥ 5.50</div>
-				</li>
-				<li>
-					<h4><a href="#">柠檬</a></h4>
-					<a href="#"><img src="images/goods/goods001.jpg"></a>
-					<div class="prize">¥ 3.90</div>
-				</li>
-				<li>
-					<h4><a href="#">奇异果</a></h4>
-					<a href="#"><img src="images/goods/goods012.jpg"></a>
-					<div class="prize">¥ 25.80</div>
-				</li>
+				{% endfor %}
 			</ul>
 		</div>
 	</div>
@@ -279,4 +284,4 @@
 			window.location.href = 'list.html';
 		}
 	</script>
-{% endblock center_content %}
+{% endblock center_body %}

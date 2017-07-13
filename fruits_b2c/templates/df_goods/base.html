@@ -1,8 +1,19 @@
 {% extends 'base.html' %}
 {% block center_body %}
 <div class="navbar_con">
-		<div class="navbar">
-			<h1 class="fl">全部商品分类</h1>
+		<div class="navbar clearfix">
+			<div class="subnav_con fl">
+				<h1>全部商品分类</h1>
+				<span></span>
+				<ul class="subnav">
+					<li><a href="#" class="fruit">新鲜水果</a></li>
+					<li><a href="#" class="seafood">海鲜水产</a></li>
+					<li><a href="#" class="meet">猪牛羊肉</a></li>
+					<li><a href="#" class="egg">禽类蛋品</a></li>
+					<li><a href="#" class="vegetables">新鲜蔬菜</a></li>
+					<li><a href="#" class="ice">速冻食品</a></li>
+				</ul>
+			</div>
 			<ul class="navlist fl">
 				<li><a href="">首页</a></li>
 				<li class="interval">|</li>
@@ -11,6 +22,12 @@
 				<li><a href="">抽奖</a></li>
 			</ul>
 		</div>
+	</div>
+
+	<div class="breadcrumb">
+		<a href="#">全部分类</a>
+		<span>></span>
+		<a href="#">新鲜水果</a>
 	</div>
     {% block center_content %}
 
