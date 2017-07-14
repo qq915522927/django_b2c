@@ -10,7 +10,7 @@
                 {% if request.session.username|default:'' != '' %}
 				<div class="login_info fl">
 					欢迎您：<em>{{ request.session.username }}</em>
-                            <em><a href="/user/logout">退出登录</a></em>
+                            <em><a href="/user/logout">退出</a></em>
 				</div>
                 {% else %}
 				<div class="login_btn fl">
@@ -34,15 +34,15 @@
 
     <div class="search_bar clearfix">
 		<a href="index.html" class="logo fl"><img src="/static/images/logo.png"></a>
-        {% if name == 1 %}<div class="sub_page_name fl">|&nbsp;&nbsp;&nbsp;&nbsp;用户中心</div>{% endif %}
+        {% if name == 1 %}<div class="sub_page_name fl">|&nbsp;&nbsp;&nbsp;&nbsp;{{ title }}</div>{% endif %}
 		<div class="search_con fl">
 			<input type="text" class="input_text fl" name="" placeholder="搜索商品">
 			<input type="button" class="input_btn fr" name="" value="搜索">
 		</div>
         {% if guest_cart == 1 %}
 		<div class="guest_cart fr">
-			<a href="#" class="cart_name fl">我的购物车</a>
-			<div class="goods_count fl" id="show_count">1</div>
+			<a href="/cart" class="cart_name fl">我的购物车</a>
+			<div class="goods_count fl" id="show_count">{{ cart_count }}</div>
 		</div>
     {% endif %}
 	</div>

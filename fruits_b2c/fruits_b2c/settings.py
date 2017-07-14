@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'df_user',
     'df_goods',
-    'tinymce'
+    'tinymce',
+    'df_cart'
 ]
 
 MIDDLEWARE = [

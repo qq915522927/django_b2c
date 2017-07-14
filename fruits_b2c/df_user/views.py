@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import *
 from .models import User
+from df_goods.models import GoodInfo
 from  hashlib import sha1
 from . import user_decorator
 
@@ -93,7 +94,7 @@ def login_handle(request):
             red.set_cookie('upwd', '',max_age=-1)
             # request.COOKIES['userinfo']=[user.uname,user.upwd]
         request.session['username'] = uname
-        request.session['pwd'] = upwd
+        request.session['uid'] = user.id
         return red
 
     else:
@@ -112,7 +113,21 @@ def logout(request):
 def user_center_info(request):
     username = request.session.get('username')
     user = User.objects.filter(uname=username).first()
-    context = {'title': '用户中心', 'username': username, 'phone': user.uphone, 'adress': user.uadr}
+
+    #获取最近浏览的商品
+    goodids = request.COOKIES.get('goodids','')#获得 cookie存的记录
+    goodidsl = goodids.split(',')#拆分为列表
+
+    #这样查询可以的到所需商品，但顺序无法维护，无法为原先设定顺序
+    # GoodInfo.objects.filter(id__in=goodids)
+    goods_list = []#用来存放 商品列表，并维持顺序不变
+    for good_id in goodidsl:
+        goods = GoodInfo.objects.filter(pk=good_id).first()
+        goods_list.append(goods)
+
+
+    context = {'title': '用户中心', 'username': username, 'phone': user.uphone, 'adress': user.uadr,
+                'good_list':goods_list}
     return render(request, 'df_user/user_center_info.html', context)
 
 def user_center_site(request):

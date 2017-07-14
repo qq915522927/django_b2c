@@ -67,3 +67,42 @@ def list(request,tid,sid,pindex):
                 }
 
     return render(request,'df_goods/list.html',context)
+
+def detail(request,id):
+    goods = GoodInfo.objects.filter(pk=int(id)).first()
+    goods.gclick += 1 #点击量加1
+    goods.save()
+    from df_cart.models import Cart
+    #返回用于显示购物车内商品总数
+    cart_count = Cart.objects.filter(user_id=request.session.get('uid',0)).count()
+    news = goods.gtype.goodinfo_set.order_by('-id')[0:2]
+    context = {'title':goods.gtype.ttitle,
+               'goods':goods,
+                'cart_count':cart_count,
+               'news':news,
+               'guest_cart':1,
+               'typeinfo':goods.gtype
+               }
+    response = render(request,'df_goods/detail.html',context)
+
+    #接下来，要将浏览信息，存入 cookie ，以便 最近浏览 功能使用
+    #存入 cookie 的形式微 { 'gooids':'1,5,6,7,8,9'}
+    #id间已逗号隔开
+    goodids = request.COOKIES.get('goodids','')
+    if goodids != '':
+        goodidsl = goodids.split(',') #将字符串 拆分成 列表
+        if goodidsl.count(id) >=1 :#先判断 是否已经存在列表里
+            #如果已经存在，则删除存在的元素,之后会插入新的
+            goodidsl.remove(id)
+        #将新的id放在 列表的 第一个
+        goodidsl.insert(0,id)
+        if len(goodidsl) >=6:#如果超过 6个，则删除最后一个，相当于长度为5的队列
+            del goodidsl[5]
+        goodids = ','.join(goodidsl)#将列表，以逗号分割的形式 拼接为字符串
+    else:#如果为空则 直接 添加
+        goodids = id
+
+
+    response.set_cookie('goodids',goodids)
+
+    return  response
