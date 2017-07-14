@@ -8,7 +8,7 @@ $(function () {
     {#    全选全消#}
     $('#check_all').click(function () {
 {#        获取当前全选框的状态#}
-        alert('ok');
+
         state=$(this).prop('checked');
 {#        将其他的选矿 都设置成这个状态#}
         $(':checkbox:not(#ckeck_all)').prop('checked',state)
@@ -71,7 +71,7 @@ $(function () {
 
 
 })
-    function cart_del(cart_id) {
+function cart_del(cart_id) {
         del = confirm('确定删除');
         if(del){
             $.get('/cart/delete/'+cart_id,function (data) {
@@ -86,7 +86,7 @@ $(function () {
         }
 
     }
-    function total(){
+function total(){
     total1=0;
     total_count=0;
 
@@ -112,7 +112,22 @@ $(function () {
         $('#total').text(total1.toFixed(2));
         $('.total_count1').text(total_count);
     }
+function go_order() {
+    s = '';
+    $(':checked:not(#check_all)').each(function () {
+         id = $(this).parents('.cart_list_td').attr('id');
 
+         s = s +'cart_id='+id + '&'
+
+    })
+
+    //删掉最后一个&
+
+    s=s.substring(0,s.length-1);
+    alert(s);
+    location.href = '/order?'+s ;
+
+    }
 
     </script>
 {% endblock %}
@@ -150,7 +165,7 @@ $(function () {
 	<ul class="settlements">
 		<li class="col01"><input type="checkbox" name="" checked="true" id="check_all" href="javascript:;" ></li>
 		<li class="col02" >全选</li>
-		<li class="col03">合计(不含运费)：<span>¥</span><em id="total">42.60</em><br>共计<b class="total_count1"></b>件商品</li>
-		<li class="col04"><a href="place_order.html">去结算</a></li>
+		<li class="col03">合计(不含运费)：<span>¥</span><em id="total"></em><br>共计<b class="total_count1"></b>件商品</li>
+		<li class="col04"><a href="javascript:go_order();">去结算</a></li>
 	</ul>
 {% endblock center_body %}

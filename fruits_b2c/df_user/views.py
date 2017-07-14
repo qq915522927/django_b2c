@@ -4,8 +4,8 @@ from .models import User
 from df_goods.models import GoodInfo
 from  hashlib import sha1
 from . import user_decorator
-
-
+from df_order.models import *
+from django.core.paginator import *
 # Create your views here.
 def register(request):
     return render(request, 'df_user/register.html')
@@ -116,18 +116,21 @@ def user_center_info(request):
 
     #获取最近浏览的商品
     goodids = request.COOKIES.get('goodids','')#获得 cookie存的记录
-    goodidsl = goodids.split(',')#拆分为列表
+    if goodids != '':
+        goodidsl = goodids.split(',')#拆分为列表
 
-    #这样查询可以的到所需商品，但顺序无法维护，无法为原先设定顺序
-    # GoodInfo.objects.filter(id__in=goodids)
-    goods_list = []#用来存放 商品列表，并维持顺序不变
-    for good_id in goodidsl:
-        goods = GoodInfo.objects.filter(pk=good_id).first()
-        goods_list.append(goods)
+        #这样查询可以的到所需商品，但顺序无法维护，无法为原先设定顺序
+        # GoodInfo.objects.filter(id__in=goodids)
+        goods_list = []#用来存放 商品列表，并维持顺序不变
+        for good_id in goodidsl:
+            goods = GoodInfo.objects.filter(pk=good_id).first()
+            goods_list.append(goods)
+    else:
+        goods_list = []
 
 
     context = {'title': '用户中心', 'username': username, 'phone': user.uphone, 'adress': user.uadr,
-                'good_list':goods_list}
+                'good_list':goods_list,'tag':1}
     return render(request, 'df_user/user_center_info.html', context)
 
 def user_center_site(request):
@@ -143,5 +146,20 @@ def user_center_site(request):
         user.save()
     context = {'adr':user.uadr,
                'user':user.urelname,
-               'phone':user.uphone,}
+               'phone':user.uphone,
+               'tag':3}
     return render(request,'df_user/user_center_site.html',context)
+
+def user_center_order(request,pindex):
+    uid = request.session.get('uid')
+    #根据用户获得所有订单
+    orders = Order.objects.filter(user_id=int(uid)).order_by('-odate')
+
+
+    paginator = Paginator(orders,2)
+    page = paginator.page(int(pindex))
+
+    context = {'tag':2,
+               'page':page,
+               'paginator':paginator}
+    return render(request,'df_user/user_center_order.html',context)
