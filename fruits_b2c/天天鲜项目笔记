@@ -1,0 +1,219 @@
+1.设置模板路径
+2.配置数据库文件
+3，安装pymysql并在站点文件中配置
+3.配置static静太文件，目录，路由
+4.创建应用
+5.创建对应的模型类
+6.在配置文件中 安装应用
+7.进行迁移
+8.配置url，先在主url文件中配置，再在应用文件夹下添加url文件进行url添加
+9.定义base模板文件，可以分开脚步，顶部
+10.提交post表单 要使用csrf_token来关闭防止攻击
+11.注册时的密码，用sha1加密，先编码再加密
+==================================================
+12.将验证是否登录的功能分离出来，做出装饰器，在所需要验证的视图函数上添加验证功能，如果登陆则返回原视图函数，若失败则跳转登录页面
+====================================================
+13.获取请求页面的完整url为：request.get_full_path(),返回带参数的url，
+							request.path()返回不带参数的url
+====================================================
+14.  url = request.COOKIES.get('url','/')#第二个参数为默认参数，如果url没有，则条首页
+=====================================================
+15.在模板文件中可以直接使用request
+ {% if request.session.username|default:'' != '' %}
+ *这里的 . 可以包括 字典的键，对象属性，方法，和索引的用法
+ *default 过滤器可以设置默认值
+
+=======================================================
+16.清空所有session
+   request.session.flush()
+======================================================
+17.模板继承，大致分为 底部备案部分，头部用户条部分，这个构成主要base
+=======================================================
+18.图片字段
+	gpic = models.ImageField(upload_to='df_goods')
+
+	浮点型字段（总位数，和小数位数）
+	gprice = models.DecimalField(max_digits=5, decimal_places=2)
+
+	点击量字段
+	gclick = models.IntegerField()
+	=================================================
+	富文本编辑器
+	from tinymce.models import HTMLField
+	 gdetial = HTMLField()
+	 在setttings里面配置
+==============================================
+ #设置默认值
+    remember = post.get('remember',0)
+
+   ======================================
+   19.设置cookie要用respose对象的set_cookie
+   response.set_cookie('uname',uname)
+   读取cokie用request['uname']
+
+   =======================================
+   20.request.Meta['key']
+   可以获得请求头的信息，如REFERERK可以获得来源地址，实现登录后跳回去
+   =======================================
+   21.
+当表单提交时触发的时间
+   $("form").submit(function(e){
+  alert("Submitted");
+  若 return true，则提交表单
+  若 return false 则不提交
+});
+
+================================================
+  22. #获取 对应 列表中的通过 id 倒序排列的 前四个
+        goods1 = type.goodinfo_set.order_by('-id')[0:4]
+====================================================
+23.切片过滤器
+{{ goods.gtitle|slice:'10' }}
+==================================================
+24. #创建paginator分页对象
+    paginator = Paginator(good_list,10)
+    #返回Page对象
+    page = paginator.page(int(pindex))
+ ================================================
+ 25.商品列表页，需要传入三个参数，type,sort,和index
+ 根据sort 和 type来取出相应的商品列表
+ ======================================
+ 26.遍历page对象即可获得 所需商品信息
+ 	{% for goods in page %}
+ 	===========================================
+27.  goods.gclick += 1 #点击量加1
+======================================
+28. {{ goods.gdetial|safe }}显示html 需要 加safe 过滤器 
+==============================================
+29.js实现数量和价格的变化
+ <script>
+    function plus() {
+        num = parseFloat($('.num_show').val());
+        $('.num_show').val(num+1);
+        $('.num_show').blur();
+        
+    }
+    function minus() {
+        num = parseFloat($('.num_show').val());
+        $('.num_show').val(num-1);
+        $('.num_show').blur();
+
+    }
+    $(function () {
+        $('.num_show').blur(function () {
+             num = parseFloat($('.num_show').val());
+             price = parseFloat($('#gprice').text());
+             total = num*price;
+             $('#gtotal').text(total.toFixed(2)+'元')
+
+        })
+        
+    })
+    
+    
+    </script>
+    ===============================
+    30.将字符串拆分成列表
+    	goodidsl = goodids.split(',')
+   31.列表的count方法 可以统计 元素出现的次数
+   		goodidsl.count(id)
+   	 remove方法可以删除对应的元素
+    	goodidsl.remove(id)
+    字符串的join 方法，可以以当前字符串为分隔符，拼接一个列表
+    	goodids = ','.join(goodidsl)#将列表，以逗号分割的形式 拼接为字符串
+
+   32.双下划线表示操作
+   		GoodInfo.objects.filter(id__in=goodids)
+
+   33.#用户 与 商品的 联系 是多对多的
+  #购物车 充当中间 环节，与 用户 一对多，同时 与 商品一对多
+
+class Cart(models.Model):
+    user = models.ForeignKey('df_user.User')  #与其他应用的模型类 关联 的写法
+    goods = models.ForeignKey('df_goods.GoodInfo')
+    count = models.IntegerField()
+
+34.返回列表个数 的 过滤器
+	{{ good_list|length }}
+
+35.判断 请求是否为ajax
+	if request.is_ajax():
+
+36.通过ajax添加商品，只要返回商品数量即可
+	count = Cart.objects.filter(user_id=uid).count()
+37.js中的跳转
+	location.href = ' www.hao123.com '
+	判断是否 有指定字符，indexof返回出现的位置，没有则返回-1
+	$('.login_btn fl').text().indexof('登录')>=0
+
+38.返回json格式，参数为字典类型
+	JsonResponse({'count':count})
+
+39.
+	获取元素的 某一个属性的值prop()
+	state=$(this).prop('checked');
+	设置 属性的值
+	 $(':checkbox:not(#ckeck_all)').prop('checked',state)
+	 :后面表示所有的 这类元素，:not 表示除了这个元素
+40. $(function (){}) 表示文档加载完事相当于 
+	window.onload=function(){ //执行函数}  相当于 
+ 	$(document).ready(function(){ } ) 
+ 41.一个div的class用空格分开表示同时拥有两个 class
+ 	<a href="javascript:;"  class="add fl">+</a>
+ 	用js获取的时候，只需要其中一个即可   
+
+42. 获取当前元素所有父元素中。指定类的id属性的值
+	id = $(this).parents('.cart_list_td').attr('id')    
+43 .js如果用户点击确定按钮，则 confirm() 返回 true。如果点击取消按钮，则 confirm() 返回 false  
+		del = confirm('确定删除');
+
+44.给链接 绑定js方法，模板传入参数
+	<a href="javascript:cart_del({{ cart.id }});">删除</a>
+45.设置默认值为 当前时间
+	odate = models.DateTimeField(auto_now=True)
+
+46. js中的字符串 截取
+		s=s.substring(0,s.length-1);
+
+47.获取 get 请求中的 多个同名参数
+	cartids = request.GET.getlist('cart_id')
+48.选中代码块 按table全部 右移 shift+table相反
+
+49. 模型类里 的 decmic类型 要转化成 floate 运算
+	float(cart.count) * float(cart.goods.gprice)
+50.'''
+	这些步骤中，任何一环节出错都不允许，要使用 事务 提交
+	1. 创建订单对象
+	2. 判断商品 库存 充足
+	3. 创建 订单 详情 ，多个
+	4， 修改 库存
+	5. 删除购物车
+'''
+51.格式化字符串
+	now.strftime('%Y%m%d%H%M%S')
+52. from decimal import Decimal
+=============================================
+53.django里事务的使用
+	*引入包
+		from django.db import transaction
+	*在视图函数前 加装饰器
+		@transaction.atomic()
+		def order_handle(request):
+	*埋点
+		tran_id = transaction.savepoint()#保存点，回退到这里
+	*回滚
+		 transaction.savepoint_rollback(tran_id)#会滚到点的位置
+
+54.try 之后的else表示没发生异常
+55.取小数点 后两位
+	 float('%.2f' % a)
+56.当前的页码
+		page.number
+57.模板中的加法，减法过滤器
+	page.number|add:-1 
+	实现乘法与除法
+	{% widthratio a b c %} === a/b*c
+	{% widthratio 5 1 100 %} == 5/1*100 =5*100
+	{% widthratio 5 100 1 %} ==5/100
+
+58.使用 全文检索
