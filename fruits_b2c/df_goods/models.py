@@ -15,7 +15,6 @@ class GoodInfo(models.Model):
     isDelete = models.BooleanField(default=False)
     gunit = models.CharField(max_length=20,default='500g')
     gclick = models.IntegerField()#点击量
-
     gintro = models.CharField(max_length=100)#简介
     gdetial = HTMLField()
     gtype = models.ForeignKey("TypeInfo")
